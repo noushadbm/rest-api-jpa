@@ -8,7 +8,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 @EnableWebSecurity
 public class MySecurityConfig {
@@ -39,18 +43,39 @@ public class MySecurityConfig {
         return http.build();
     }
 
+    // Use this bean, if you want to fetch the user from memory (Not in db.)
+//    @Bean
+//    public InMemoryUserDetailsManager userDetailsService2() {
+//        UserDetails user = User.withDefaultPasswordEncoder()
+//                .username("user")
+//                .password("password")
+//                .roles("USER")
+//                .build();
+//        UserDetails user1 = User.withDefaultPasswordEncoder()
+//                .username("admin")
+//                .password("password")
+//                .roles("ADMIN")
+//                .build();
+//        return new InMemoryUserDetailsManager(user, user1);
+//    }
+
+    // Use this bean if you want to keep and get the users in/from DB.
+    // You will need to execute following SQL statements in db to create user and auth tables.
+//    create table users(username varchar_ignorecase(50) not null primary key,password varchar_ignorecase(500) not null,enabled boolean not null);
+//    create table authorities (username varchar_ignorecase(50) not null,authority varchar_ignorecase(50) not null,constraint fk_authorities_users foreign key(username) references users(username));
+//    create unique index ix_auth_username on authorities (username,authority);
     @Bean
-    public InMemoryUserDetailsManager userDetailsService2() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-        UserDetails user1 = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("password")
-                .roles("ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(user, user1);
+    public UserDetailsManager users(DataSource dataSource) {
+        // User following user addition logic, if you want to create a user in db.
+        // Start the service by uncommenting the logic and then comment for subsequent startup.
+        // Else you will get user already exist error.
+//        UserDetails user = User.withDefaultPasswordEncoder()
+//                .username("user")
+//                .password("password")
+//                .roles("USER")
+//                .build();
+        JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
+        //users.createUser(user);
+        return users;
     }
 }
