@@ -21,11 +21,15 @@ public class Employee {
     @Column(name="email_id", nullable = false)
     private String emailId;
 
+    @Column(name="hid")
+    private Long healthId;
+
     public Employee() {}
 
-    public Employee(String firstName, String lastName, String email) {
+    public Employee(String firstName, String lastName, String email, Long hid) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailId = email;
+        this.healthId = hid;
     }
 }

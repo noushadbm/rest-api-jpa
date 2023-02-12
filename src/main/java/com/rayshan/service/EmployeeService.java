@@ -5,6 +5,7 @@ import com.rayshan.exception.ResourceNotFoundException;
 import com.rayshan.repository.EmployeeRepository;
 import com.rayshan.repository.SequenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +22,9 @@ public class EmployeeService {
         this.sequenceRepository = sequenceRepository;
     }
 
-    @Transactional
     public List<Employee> getAllEmployees() {
-        System.out.println("Request reached here..."+ getNextHid());
-        return this.employeeRepository.findAll();
+        Sort sort = Sort.by("id").descending();
+        return this.employeeRepository.findAll(sort);
     }
 
     public Employee getAllEmployeeById(Long employeeId) throws ResourceNotFoundException {
@@ -33,10 +33,15 @@ public class EmployeeService {
         return employee;
     }
 
+
+    @Transactional
     public Employee createEmployee(Employee employee) {
+        Long nextHealthId = getNextHid();
+        employee.setHealthId(nextHealthId);
         return this.employeeRepository.save(employee);
     }
 
+    // This method is to generate sequence manually (uses transaction).
     @Transactional(propagation = Propagation.REQUIRED)
     public Long getNextHid() {
         Long newHid = this.sequenceRepository.getNextHid();
