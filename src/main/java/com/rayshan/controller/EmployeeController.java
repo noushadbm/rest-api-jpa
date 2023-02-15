@@ -1,5 +1,6 @@
 package com.rayshan.controller;
 
+import com.rayshan.common.data.BaseRequest;
 import com.rayshan.common.entities.Employee;
 import com.rayshan.exception.ResourceNotFoundException;
 import com.rayshan.service.EmployeeService;
@@ -9,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+
+import static com.rayshan.common.Constants.DEFAULT_PAGE_SIZE;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -22,8 +26,13 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees")
-    public List<Employee> getAllEmployees() {
+    public List<Employee> getAllEmployees(BaseRequest request) {
         logger.info("Get all employees API invoked.");
+        if(!Objects.isNull(request.getPageNo())) {
+            logger.info("Will return paginated result.");
+            int pgSize = Objects.isNull(request.getPageSize()) ? DEFAULT_PAGE_SIZE : request.getPageSize();
+            return this.employeeService.getAllEmployees(request.getPageNo(), pgSize);
+        }
         return this.employeeService.getAllEmployees();
     }
 

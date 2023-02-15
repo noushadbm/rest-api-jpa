@@ -5,6 +5,8 @@ import com.rayshan.exception.ResourceNotFoundException;
 import com.rayshan.repository.EmployeeRepository;
 import com.rayshan.repository.SequenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,6 +27,12 @@ public class EmployeeService {
     public List<Employee> getAllEmployees() {
         Sort sort = Sort.by("id").descending();
         return this.employeeRepository.findAll(sort);
+    }
+
+    public List<Employee> getAllEmployees(int pageNo, int pageSize) {
+        Pageable sortAndPage =
+                PageRequest.of(pageNo, pageSize, Sort.by("id").descending());
+        return this.employeeRepository.findAll(sortAndPage).toList();
     }
 
     public Employee getAllEmployeeById(Long employeeId) throws ResourceNotFoundException {
