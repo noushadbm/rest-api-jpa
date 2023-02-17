@@ -33,9 +33,6 @@ public class EmployeeServiceTest {
     @BeforeEach
     public void setUp() {
         //when(listMock.add(anyString())).thenReturn(false);
-//        List<Employee> mockList = getUserList();
-//        when(employeeMockRepository.findAll(any(Sort.class))).thenReturn(mockList);
-//        this.employeeService = new EmployeeService(this.employeeMockRepository, this.sequenceMockRepository);
     }
 
     @AfterEach
@@ -45,7 +42,25 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void getAllEmployees() {
+    public void createEmployeeTest() {
+        // GIVEN
+        Employee employee = new Employee("firstName", "lastName", "@email", null);
+        when(employeeMockRepository.save(employee)).thenReturn(employee);
+        when(sequenceMockRepository.getNextHid()).thenReturn(10L);
+        when(sequenceMockRepository.updateHid(anyLong())).thenReturn(1);
+        //doNothing().when(sequenceMockRepository).updateHid(any(Long.class));
+        this.employeeService = new EmployeeService(this.employeeMockRepository, this.sequenceMockRepository);
+
+        // WHEN
+        Employee employeeCreated =employeeService.createEmployee(employee);
+        Assertions.assertEquals(employee, employeeCreated);
+        verify(employeeMockRepository).save(any(Employee.class));
+        verify(sequenceMockRepository).getNextHid();
+        verify(sequenceMockRepository).updateHid(anyLong());
+    }
+
+    @Test
+    public void getAllEmployeesTest() {
         // GIVEN
         List<Employee> mockList = getUserList();
         when(employeeMockRepository.findAll(any(Sort.class))).thenReturn(mockList);
@@ -60,7 +75,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void getEmployeesPaginated() {
+    public void getEmployeesPaginatedTest() {
         // GIVEN
         Pageable page0 =
                 PageRequest.of(0, PAGE_SIZE, Sort.by("id").descending());
