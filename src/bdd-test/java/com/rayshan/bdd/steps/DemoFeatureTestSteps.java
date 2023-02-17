@@ -13,7 +13,7 @@ import org.junit.platform.commons.logging.LoggerFactory;
 public class DemoFeatureTestSteps extends BaseIntegrationTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(DemoFeatureTestSteps.class);
 
-    @Given("^Some service exists$")
+    @Given("^Service is up and running$")
     public void some_service_exists() throws Throwable {
         LOGGER.info(() -> "++ GIVEN -> some_service_exists()");
     }
@@ -36,5 +36,29 @@ public class DemoFeatureTestSteps extends BaseIntegrationTest {
     @Then("^cleanup demo test data$")
     public void cleanup_test_data() throws Throwable {
         LOGGER.info(() -> "++ THEN -> cleanup_test_data()");
+    }
+
+    @And("User with {string} does not exist in db")
+    public void userDoesNotExistsInDB(String username) {
+        System.out.println("username:" + username);
+    }
+
+    @And("User with {string} and {string} exist in db")
+    public void userExistsInDB(String username, String password) {
+        System.out.println("username:" + username + ", password:" + password);
+    }
+
+    @Then("Login service returns success")
+    public void loginServiceReturnsSuccess() {
+        
+    }
+
+    @Then("Login service returns failure")
+    public void loginServiceReturnsFailure() {
+    }
+
+    @When("Login url invoked with {string} and {string}")
+    public void loginUrlInvokedWithAnd(String username, String password) {
+        System.out.println("API invoked: username:" + username + ", password:" + password);
     }
 }
